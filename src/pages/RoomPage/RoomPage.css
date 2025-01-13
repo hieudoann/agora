@@ -1,0 +1,78 @@
+.meet-container {
+    display: flex;
+    height: 100vh;
+    font-family: sans-serif;
+  }
+  
+  .control-panel {
+    width: 300px;
+    background: #f8f8f8;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-right: 1px solid #ddd;
+  }
+  
+  .device-inputs label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  
+  .device-inputs select {
+    padding: 0.3rem;
+  }
+  
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .active-btn {
+    background-color: #1a73e8;
+    color: #fff;
+  }
+  
+  .video-section {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    position: relative;
+  }
+  
+  .local-video-wrapper,
+  .remote-video-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+    height: 80%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+  }
+  
+  .video-tile {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .placeholder {
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .waiting {
+    color: #bbb;
+    text-align: center;
+  }
