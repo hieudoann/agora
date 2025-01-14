@@ -7,6 +7,7 @@ import type {
   IAgoraRTCRemoteUser,
 } from "agora-rtc-sdk-ng/esm";
 import {
+  createScreenVideoTrack,
   VERSION,
   createClient,
   createCameraVideoTrack,
@@ -38,10 +39,10 @@ function Room() {
   const [isVideoSubed, setIsVideoSubed] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
 
-  const channel = useRef("user");
-  const appid = useRef("d6db94477dcb46668b6f7a39e9398d8d");
+  const channel = useRef("HOPT");
+  const appid = useRef("f1bbdb459d5c4f808a4e5c879595975b");
   const token = useRef(
-    "007eJxTYHiWkBOobDwjbXVR96QfXzZEKN8Rn+4vHbrt4pS/xbc+VHUrMKQkGxqkmBumGFkmW5iYJiVbpBkbG5umWJpbWCSZG1mkVGa1pDcEMjJwL2VgZGSAQBCfhaG0OLWIgQEArDkgGQ=="
+    "007eJxTYIhrmsBS8eX59DkVU7yub/8qaJ5wZZbsKhvbSULOwYqeN0wVGNIMk5JSkkxMLVNMk03SLAwsEk1STZMtzC1NgdDcNKllX2t6QyAjw1oDQ1ZGBggE8VkYPPwDQhgYAC37HiA="
   );
 
   useEffect(() => {
@@ -96,6 +97,7 @@ function Room() {
     }
     if (isJoined) {
       await leaveChannel();
+      return;
     }
     client.on("user-published", onUserPublish);
     try {
@@ -141,27 +143,39 @@ function Room() {
   };
 
   const publishVideo = async () => {
-    if (!videoTrack) {
-      videoTrack = await createCameraVideoTrack({ cameraId: selectedVideoDevice });
+    if (isVideoPubed) {
+      await client.unpublish(videoTrack);
+      videoTrack.stop();
+      setIsVideoPubed(false);
+    } else {
+      if (!videoTrack) {
+        videoTrack = await createCameraVideoTrack({ cameraId: selectedVideoDevice });
+      }
+      await client.publish(videoTrack);
+      videoTrack.play("local-video");
+      setIsVideoPubed(true);
     }
-    await client.publish(videoTrack);
-    videoTrack.play("local-video");
-    setIsVideoPubed(true);
   };
 
   const publishAudio = async () => {
-    if (!audioTrack) {
-      audioTrack = await createMicrophoneAudioTrack({ microphoneId: selectedAudioDevice });
+    if (isAudioPubed) {
+      await client.unpublish(audioTrack);
+      audioTrack.stop();
+      setIsAudioPubed(false);
+    } else {
+      if (!audioTrack) {
+        audioTrack = await createMicrophoneAudioTrack({ microphoneId: selectedAudioDevice });
+      }
+      await client.publish(audioTrack);
+      setIsAudioPubed(true);
     }
-    await client.publish(audioTrack);
-    setIsAudioPubed(true);
   };
 
   return (
     <div className="meet-container">
       {/* Left control panel */}
       <div className="control-panel">
-        <h3>Device Selection</h3>
+        {/* <h3>Device Selection</h3> */}
         <div className="device-inputs">
           <label>
             Microphone:
@@ -186,7 +200,7 @@ function Room() {
           </label>
         </div>
 
-        <h3>App Info</h3>
+        {/* <h3>App Info</h3>
         <input
           defaultValue={appid.current}
           placeholder="appid"
@@ -201,12 +215,12 @@ function Room() {
           defaultValue={channel.current}
           placeholder="channel"
           onChange={(e) => (channel.current = e.target.value)}
-        />
+        /> */}
 
         <div className="buttons">
           <button onClick={joinChannel} className={isJoined ? "active-btn" : ""}>
             {isJoined ? "Leave Channel" : "Join Channel"}
-          </button>
+          </button> 
           {isJoined && (
             <>
               <button onClick={publishVideo} className={isVideoPubed ? "active-btn" : ""}>
@@ -215,13 +229,42 @@ function Room() {
               <button onClick={publishAudio} className={isAudioPubed ? "active-btn" : ""}>
                 {isAudioPubed ? "Unpublish Audio" : "Publish Audio"}
               </button>
+      <button
+        onClick={async () => { 
+          try {
+            if (videoTrack) {
+              await client.unpublish(videoTrack);
+              videoTrack.stop();
+            }
+            const screenTrack = await createScreenVideoTrack();
+            await client.publish(screenTrack);
+            screenTrack.play('local-video');
+            
+            screenTrack.on('track-ended', async () => {
+              await client.unpublish(screenTrack);
+              screenTrack.close();
+              if (videoTrack) {
+                await client.publish(videoTrack);
+                videoTrack.play('local-video');
+                setIsVideoPubed(true);
+              }
+            });
+          } catch (error) {
+            console.error("Screen sharing failed:", error);
+          }
+        }}
+      >
+        Share Screen
+      </button>
+
             </>
           )}
         </div>
       </div>
 
-      {/* Video section */}
-      <div className="video-section">
+
+      {/* Video section */} 
+      <div className="video-section"> 
         <div className="local-video-wrapper">
           <video id="local-video" hidden={!isVideoPubed} className="video-tile"></video>
           {!isVideoPubed && <div className="placeholder">Local Video Off</div>}
