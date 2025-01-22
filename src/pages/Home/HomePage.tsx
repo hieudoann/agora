@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "./HomePage.css"; // File CSS riêng để chỉnh giao diện
 
 const HomePage = () => {
-  const channel = useRef("user2");
-  const appid = useRef("fa3360f045eb4ba78f874de84ebcfda1");
+  const channel = useRef("HOPT");
+  const appid = useRef("dd011e00be554762a1a22e3ac962a2ad");
   const token = useRef(
-    "007eJxTYPjh9kHji827ot0tjAtcfnA6nIvLs39wNn5GZa161YmdvesUGNISjY3NDNIMTExTk0ySEs0t0izMTVJSLUxSk5LTUhINo9I60hsCGRkc9wkwMjJAIIjPylBanFpkxMAAAPjCITw="
+    "007eJxTYPizWaJjwoMvPzXCfmWeaA9yCa5NZOdJyXwZ36q5SpupV02BwTTNxNw8xTA12dTAzCTZ0sIiydg8NdXYPNnCwMQ8MS0lU6g/vSGQkcH0TywjIwMEgvgsDB7+ASEMDAAwPh4B"
   );
   const navigate = useNavigate();
 
